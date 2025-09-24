@@ -258,7 +258,7 @@
                                     <span class="tooltiptext">จำนวนชั่วโมงที่ร้านเปิดให้บริการต่อวัน</span>
                                 </span>
                             </label>
-                            <input type="number" id="openingHours" class="input-field" min="0" max="24">
+                            <input type="number" id="openingHours" class="input-field" min="0" max="24" value="12">
                             <div class="error-message" id="openingHours-error"></div>
                         </div>
                         <div class="input-group">
@@ -268,7 +268,7 @@
                                     <span class="tooltiptext">จำนวนวันที่ร้านเปิดให้บริการต่อเดือน</span>
                                 </span>
                             </label>
-                            <input type="number" id="workingDays" class="input-field" min="0" max="31">
+                            <input type="number" id="workingDays" class="input-field" min="0" max="31" value="26">
                             <div class="error-message" id="workingDays-error"></div>
                         </div>
                         <hr class="my-4">
@@ -355,7 +355,7 @@
                                     <span class="tooltiptext">ค่าเช่าสถานที่ต่อเดือนหากเป็นร้านเช่า</span>
                                 </span>
                             </label>
-                            <input type="number" id="rent" class="input-field" min="0">
+                            <input type="number" id="rent" class="input-field" min="0" value="10000">
                         </div>
                         <div id="own-group" class="hidden space-y-4">
                             <div class="input-group">
@@ -759,9 +759,9 @@
         // Store data for different pharmacy sizes
         const pharmacyData = {
             small: {
-                salesPerPatient: 200, patientsPerDay: 50, openingHours: 11.3, workingDays: 30,
+                salesPerPatient: 200, patientsPerDay: 50, openingHours: 12, workingDays: 26,
                 pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
-                propertyType: 'rent', rent: 16638, buildingValue: 0, buildingDepreciationYears: 20,
+                propertyType: 'rent', rent: 10000, buildingValue: 0, buildingDepreciationYears: 20,
                 equipmentCost: 323437, equipmentDepreciationYears: 5,
                 cogsRatio: 70, licenseFee: 10000, welfare: 1725, utilities: 3000,
                 supplies: 1500, bonus: 8625, miscellaneous: 1500,
@@ -770,9 +770,9 @@
                 insurance: 12000, initialInventory: 300000, inventoryTurnover: 6
             },
             medium: {
-                salesPerPatient: 200, patientsPerDay: 100, openingHours: 12, workingDays: 30,
+                salesPerPatient: 200, patientsPerDay: 100, openingHours: 12, workingDays: 26,
                 pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 2, assistantSalary: 15000,
-                propertyType: 'rent', rent: 27730, buildingValue: 5000000, buildingDepreciationYears: 20,
+                propertyType: 'rent', rent: 20000, buildingValue: 5000000, buildingDepreciationYears: 20,
                 equipmentCost: 539061, equipmentDepreciationYears: 5,
                 cogsRatio: 70, licenseFee: 10000, welfare: 2175, utilities: 6000,
                 supplies: 3000, bonus: 10875, miscellaneous: 3000,
@@ -781,7 +781,7 @@
                 insurance: 20000, initialInventory: 600000, inventoryTurnover: 8
             },
             large: {
-                salesPerPatient: 200, patientsPerDay: 150, openingHours: 12, workingDays: 30,
+                salesPerPatient: 200, patientsPerDay: 150, openingHours: 12, workingDays: 26,
                 pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
                 propertyType: 'own', rent: 0, buildingValue: 7000000, buildingDepreciationYears: 20,
                 equipmentCost: 862497, equipmentDepreciationYears: 5,
