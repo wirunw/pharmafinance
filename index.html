@@ -646,6 +646,11 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Export Button for Results Tab -->
+            <div class="mt-8 mb-8 flex flex-wrap gap-4 justify-center">
+                <button id="exportBtnResults" class="btn btn-secondary text-lg" disabled>ส่งออกข้อมูล (PDF)</button>
+            </div>
         </div>
 
         <!-- Analysis Tab -->
@@ -675,6 +680,11 @@
                         <!-- Content will be populated by JavaScript -->
                     </div>
                 </div>
+            </div>
+            
+            <!-- Export Button for Analysis Tab -->
+            <div class="mt-8 mb-8 flex flex-wrap gap-4 justify-center">
+                <button id="exportBtnAnalysis" class="btn btn-secondary text-lg" disabled>ส่งออกข้อมูล (PDF)</button>
             </div>
         </div>
 
@@ -953,7 +963,12 @@
                     if (mainErrorList) mainErrorList.appendChild(li);
                 });
                 const exportBtn = document.getElementById('exportBtn');
+                const exportBtnResults = document.getElementById('exportBtnResults');
+                const exportBtnAnalysis = document.getElementById('exportBtnAnalysis');
+                
                 if (exportBtn) exportBtn.disabled = true;
+                if (exportBtnResults) exportBtnResults.disabled = true;
+                if (exportBtnAnalysis) exportBtnAnalysis.disabled = true;
                 return;
             }
             
@@ -1072,9 +1087,14 @@
             const tabNavigation = document.getElementById('tab-navigation');
             if (tabNavigation) tabNavigation.classList.remove('hidden');
             
-            // Enable export button
+            // Enable all export buttons
             const exportBtn = document.getElementById('exportBtn');
+            const exportBtnResults = document.getElementById('exportBtnResults');
+            const exportBtnAnalysis = document.getElementById('exportBtnAnalysis');
+            
             if (exportBtn) exportBtn.disabled = false;
+            if (exportBtnResults) exportBtnResults.disabled = false;
+            if (exportBtnAnalysis) exportBtnAnalysis.disabled = false;
             
             // Switch to results tab after calculation
             setTimeout(() => {
@@ -1327,6 +1347,16 @@
         const exportBtn = document.getElementById('exportBtn');
         if (exportBtn) {
             exportBtn.addEventListener('click', exportToPDF);
+        }
+        
+        const exportBtnResults = document.getElementById('exportBtnResults');
+        if (exportBtnResults) {
+            exportBtnResults.addEventListener('click', exportToPDF);
+        }
+        
+        const exportBtnAnalysis = document.getElementById('exportBtnAnalysis');
+        if (exportBtnAnalysis) {
+            exportBtnAnalysis.addEventListener('click', exportToPDF);
         }
 
         // Add listeners to auto-update calculated fields and switch to custom
