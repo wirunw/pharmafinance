@@ -581,7 +581,6 @@
                 <button class="tab-button" data-tab="results">ผลลัพธ์</button>
                 <button class="tab-button" data-tab="analysis">การวิเคราะห์</button>
             </div>
-
         </div>
 
         <!-- Results Tab -->
@@ -1087,16 +1086,6 @@
             // Enable export button
             const exportBtn = document.getElementById('exportBtn');
             if (exportBtn) exportBtn.disabled = false;
-            
-            // Show tabs and switch to results
-            const tabNavigation = document.getElementById('tab-navigation');
-            if (tabNavigation) tabNavigation.classList.remove('hidden');
-            if (document.querySelector('.tab-button[data-tab="inputs"]')) {
-                document.querySelector('.tab-button[data-tab="inputs"]').click(); // Simulate click to reset tab state
-            }
-            if (document.querySelector('.tab-button[data-tab="results"]')) {
-                document.querySelector('.tab-button[data-tab="results"]').click(); // Then switch to results
-            }
         }
         
         // Update analysis sections
