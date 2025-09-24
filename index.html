@@ -1086,6 +1086,18 @@
             // Enable export button
             const exportBtn = document.getElementById('exportBtn');
             if (exportBtn) exportBtn.disabled = false;
+            
+            // Show tabs and switch to results
+            const tabNavigation = document.getElementById('tab-navigation');
+            if (tabNavigation) tabNavigation.classList.remove('hidden');
+            if (document.querySelector('.tab-button[data-tab="inputs"]')) {
+                // Add event listener to inputs tab button to allow returning to input screen
+                const inputsTabButton = document.querySelector('.tab-button[data-tab="inputs"]');
+                // Don't override any existing event listeners, just ensure it works
+            }
+            if (document.querySelector('.tab-button[data-tab="results"]')) {
+                document.querySelector('.tab-button[data-tab="results"]').click(); // Then switch to results
+            }
         }
         
         // Update analysis sections
@@ -1230,7 +1242,27 @@
             if(exportBtn && exportBtn.disabled) return;
             const printWindow = window.open('', '_blank');
             const recommendationsHTML = document.getElementById('recommendations-content').innerHTML
-                .replace(/class="bg-blue-50 p-3 rounded-lg mb-2"/g, 'style="padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; background-color: #f0f8ff;"');
+                .replace(/class=\"bg-blue-50 p-3 rounded-lg mb-2\"/g, 'style=\"padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; background-color: #f0f8ff;\"');
+            
+            // Get input values to display in the export
+            const inputValues = `
+                <div class="export-section">
+                    <div class="export-result-card">
+                        <div class="export-result-title">ข้อมูลนำเข้า</div>
+                        <div class="export-result-item"><span class="export-result-label">ยอดขายเฉลี่ยต่อคน</span><span class="export-result-value">${toCurrency(inputs.salesPerPatient ? parseFloat(inputs.salesPerPatient.value) || 0 : 0)}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">จำนวนลูกค้าเฉลี่ยต่อวัน</span><span class="export-result-value">${(inputs.patientsPerDay ? inputs.patientsPerDay.value : 0) || 0}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">จำนวนชั่วโมงให้บริการต่อวัน</span><span class="export-result-value">${(inputs.openingHours ? inputs.openingHours.value : 0) || 0}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">จำนวนวันเปิดทำการต่อเดือน</span><span class="export-result-value">${(inputs.workingDays ? inputs.workingDays.value : 0) || 0}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">จำนวนเภสัชกร (FTE)</span><span class="export-result-value">${(inputs.pharmacistFTE ? inputs.pharmacistFTE.value : 0) || 0}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">เงินเดือนเภสัชกร</span><span class="export-result-value">${toCurrency(inputs.pharmacistSalary ? parseFloat(inputs.pharmacistSalary.value) || 0 : 0)}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">จำนวนผู้ช่วย (FTE)</span><span class="export-result-value">${(inputs.assistantFTE ? inputs.assistantFTE.value : 0) || 0}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">เงินเดือนผู้ช่วย</span><span class="export-result-value">${toCurrency(inputs.assistantSalary ? parseFloat(inputs.assistantSalary.value) || 0 : 0)}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">ประเภทสถานที่</span><span class="export-result-value">${inputs.propertyType ? inputs.propertyType.value : 'rent'}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">ค่าเช่ารายเดือน</span><span class="export-result-value">${toCurrency(inputs.rent ? parseFloat(inputs.rent.value) || 0 : 0)}</span></div>
+                        <div class="export-result-item"><span class="export-result-label">อัตราส่วนต้นทุนสินค้า</span><span class="export-result-value">${(inputs.cogsRatio ? inputs.cogsRatio.value : 0) || 0}%</span></div>
+                    </div>
+                </div>
+            `;
             
             const content = `<html><head><title>ผลการวิเคราะห์ร้านยา</title><style>
                 body { font-family: Sarabun, Arial, sans-serif; }
@@ -1249,6 +1281,7 @@
                     <div class="export-title">ผลการวิเคราะห์ธุรกิจร้านยา</div>
                     <div class="export-date">วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                 </div>
+                ${inputValues}
                 <div class="export-section">
                     <div class="export-results-grid">
                         <div class="export-result-card">
