@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Financial Planner 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+        }
+        .section-container {
+            background-color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e0e7ff;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-group { margin-bottom: 1rem; }
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        .input-field.invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
+        }
+        .result-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+            color: #1e293b;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: center;
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-label { color: #64748b; }
+        .result-value {
+            font-weight: 600;
+            color: #1e293b;
+            text-align: right;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:disabled {
+            background-color: #94a3b8;
+            color: #e2e8f0;
+            cursor: not-allowed;
+            border-color: #94a3b8;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            border: 1px solid #2563eb;
+        }
+        .btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-secondary:hover:not(:disabled) { background-color: #e2e8f0; }
+        .btn-active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        .profit { color: #16a34a; }
+        .loss { color: #dc2626; }
+        details > summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        .calculated-field {
+            background-color: #eef2ff;
+            color: #4338ca;
+            font-weight: bold;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #94a3b8;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 4px solid #3b82f6;
+        }
+        .tab { display: none; }
+        .tab.active { display: block; }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0;
+            border: none;
+            cursor: pointer;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        .tab-button.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            min-height: 1.25rem; /* Reserve space */
+        }
+        #main-error-container {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-screen-xl mx-auto">
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center mb-4">
+                <img src="https://i.postimg.cc/yY1rPJ07/wirun-facbook.png" alt="Logo" class="h-16 w-16 object-contain mr-4">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Pharmacy Financial Planner 2025</h1>
+                    <p class="text-gray-600 mt-2">Pharmacy Business Planner - Operation-Driven with Advanced Analytics</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="mb-6 hidden" id="tab-navigation">
+            <button class="tab-button active" data-tab="inputs">ข้อมูลนำเข้า</button>
+            <button class="tab-button" data-tab="results">ผลลัพธ์</button>
+            <button class="tab-button" data-tab="analysis">การวิเคราะห์</button>
+        </div>
+
+        <!-- Input Tab -->
+        <div id="inputs-tab" class="tab active">
+            <!-- Store Size Selector -->
+            <div class="mb-6 section-container">
+                <h2 class="section-title">1. เริ่มต้นด้วยข้อมูลต้นแบบ</h2>
+                <div class="flex flex-wrap gap-4" id="store-size-selector">
+                    <button class="btn btn-secondary" data-size="small">ร้านเล็ก</button>
+                    <button class="btn btn-secondary" data-size="medium">ร้านกลาง</button>
+                    <button class="btn btn-secondary" data-size="large">ร้านใหญ่</button>
+                    <button class="btn btn-secondary" data-size="custom">กำหนดเอง</button>
+                </div>
+            </div>
+            
+            <!-- Input Form -->
+            <div class="mb-6 section-container">
+                <h2 class="section-title">2. ปรับแก้ปัจจัยหลัก (Key Drivers)</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-6">
+                    
+                    <!-- Col 1: Operation Drivers -->
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-lg text-slate-800">ด้านปฏิบัติการ</h3>
+                        <div class="input-group">
+                            <label for="salesPerPatient" class="input-label">
+                                ยอดขายเฉลี่ยต่อคน (บาท)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">ยอดขายเฉลี่ยต่อลูกค้าหนึ่งคนต่อวัน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="salesPerPatient" class="input-field" min="0">
+                            <div class="error-message" id="salesPerPatient-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="patientsPerDay" class="input-label">
+                                จำนวนลูกค้าเฉลี่ยต่อวัน (คน)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนลูกค้าที่เข้าร้านโดยเฉลี่ยต่อวัน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="patientsPerDay" class="input-field" min="0">
+                            <div class="error-message" id="patientsPerDay-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="openingHours" class="input-label">
+                                จำนวนชั่วโมงให้บริการต่อวัน
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนชั่วโมงที่ร้านเปิดให้บริการต่อวัน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="openingHours" class="input-field" min="0" max="24">
+                            <div class="error-message" id="openingHours-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="workingDays" class="input-label">
+                                จำนวนวันเปิดทำการต่อเดือน
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนวันที่ร้านเปิดให้บริการต่อเดือน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="workingDays" class="input-field" min="0" max="31">
+                            <div class="error-message" id="workingDays-error"></div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="input-group">
+                            <label for="monthlySales" class="input-label">
+                                ยอดขายต่อเดือน (คำนวณอัตโนมัติ)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">คำนวณจาก (ยอดขายต่อคน × จำนวนลูกค้าต่อวัน × จำนวนวัน)</span>
+                                </span>
+                            </label>
+                            <input type="text" id="monthlySales" class="input-field calculated-field" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Personnel & Overtime Drivers -->
+                    <div class="space-y-4">
+                         <h3 class="font-bold text-lg text-slate-800">ด้านบุคลากร</h3>
+                        <div class="input-group">
+                            <label for="pharmacistFTE" class="input-label">
+                                จำนวนเภสัชกร (FTE)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนเภสัชกรเต็มเวลาที่มีอยู่ในร้าน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="pharmacistFTE" class="input-field" min="0" step="0.1">
+                            <div class="error-message" id="pharmacistFTE-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="pharmacistSalary" class="input-label">
+                                เงินเดือนเภสัชกร (ต่อคน/เดือน)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">เงินเดือนพื้นฐานของเภสัชกรต่อคนต่อเดือน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="pharmacistSalary" class="input-field" min="0">
+                            <div class="error-message" id="pharmacistSalary-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="assistantFTE" class="input-label">
+                                จำนวนผู้ช่วย (FTE)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนผู้ช่วยเภสัชกรเต็มเวลา</span>
+                                </span>
+                            </label>
+                            <input type="number" id="assistantFTE" class="input-field" min="0" step="0.1">
+                            <div class="error-message" id="assistantFTE-error"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="assistantSalary" class="input-label">
+                                เงินเดือนผู้ช่วย (ต่อคน/เดือน)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">เงินเดือนพื้นฐานของผู้ช่วยเภสัชกรต่อคนต่อเดือน</span>
+                                </span>
+                            </label>
+                            <input type="number" id="assistantSalary" class="input-field" min="0">
+                            <div class="error-message" id="assistantSalary-error"></div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="input-group">
+                            <label for="totalOT" class="input-label">
+                                ค่าล่วงเวลา (OT) รวม (คำนวณอัตโนมัติ)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">รวมค่าล่วงเวลาของเภสัชกรและผู้ช่วย (คำนวณจากฐานเงินเดือน 22 วันทำงาน)</span>
+                                </span>
+                            </label>
+                            <input type="text" id="totalOT" class="input-field calculated-field" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Col 3: Capital & Asset Drivers -->
+                    <div class="space-y-4">
+                         <h3 class="font-bold text-lg text-slate-800">ด้านสินทรัพย์และการลงทุน</h3>
+                        <div class="input-group">
+                            <label class="input-label">ประเภทสถานที่</label>
+                            <select id="propertyType" class="input-field">
+                                <option value="rent">เช่า</option>
+                                <option value="own">เป็นเจ้าของ</option>
+                            </select>
+                        </div>
+                        <div id="rent-group" class="input-group">
+                            <label for="rent" class="input-label">
+                                ค่าเช่ารายเดือน (บาท)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">ค่าเช่าสถานที่ต่อเดือนหากเป็นร้านเช่า</span>
+                                </span>
+                            </label>
+                            <input type="number" id="rent" class="input-field" min="0">
+                        </div>
+                        <div id="own-group" class="hidden space-y-4">
+                            <div class="input-group">
+                                <label for="buildingValue" class="input-label">
+                                    มูลค่าอาคาร (บาท)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">มูลค่าตลาดของอาคารที่เป็นเจ้าของ</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="buildingValue" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="buildingDepreciationYears" class="input-label">
+                                    ระยะเวลาเสื่อมราคาอาคาร (ปี)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">จำนวนปีที่ใช้ในการเสื่อมค่าอาคาร</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="buildingDepreciationYears" class="input-field" min="1" max="50">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="equipmentCost" class="input-label">
+                                เงินลงทุนอุปกรณ์ (บาท)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">ต้นทุนการซื้อเครื่องมือและอุปกรณ์</span>
+                                </span>
+                            </label>
+                            <input type="number" id="equipmentCost" class="input-field" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="equipmentDepreciationYears" class="input-label">
+                                ระยะเวลาเสื่อมราคาอุปกรณ์ (ปี)
+                                <span class="tooltip">?
+                                    <span class="tooltiptext">จำนวนปีที่ใช้ในการเสื่อมค่าอุปกรณ์</span>
+                                </span>
+                            </label>
+                            <input type="number" id="equipmentDepreciationYears" class="input-field" min="1" max="20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Inputs -->
+            <div class="mb-6 section-container">
+                <details>
+                    <summary class="text-xl">3. ปรับแก้ปัจจัยต้นทุนและค่าใช้จ่ายอื่นๆ (คลิกเพื่อขยาย)</summary>
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 border-t pt-6">
+                        <!-- Column 1 -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-slate-700">ต้นทุนและค่าใช้จ่ายหลัก</h4>
+                            <div class="input-group">
+                                <label for="cogsRatio" class="input-label">
+                                    อัตราส่วนต้นทุนสินค้า (%)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">เปอร์เซ็นต์ของยอดขายที่ใช้ในการซื้อสินค้า</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="cogsRatio" class="input-field" min="0" max="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="licenseFee" class="input-label">
+                                    ค่าใบประกอบวิชาชีพ (บาท/เดือน)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าธรรมเนียมใบประกอบวิชาชีพเภสัชกร</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="licenseFee" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="welfare" class="input-label">
+                                    สวัสดิการลูกจ้าง (บาท/เดือน)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าสวัสดิการที่จ่ายให้พนักงาน</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="welfare" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="utilities" class="input-label">
+                                    ค่าสาธารณูปโภค (บาท/เดือน)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าไฟฟ้า น้ำ โทรศัพท์ อินเทอร์เน็ต</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="utilities" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="insurance" class="input-label">
+                                    ค่าประกันภัย (บาท/ปี)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าประกันอาคารและอุปกรณ์ต่อปี</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="insurance" class="input-field" min="0">
+                            </div>
+                        </div>
+                        <!-- Column 2 -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-slate-700">ค่าใช้จ่ายผันแปรอื่นๆ</h4>
+                            <div class="input-group">
+                                <label for="supplies" class="input-label">
+                                    ค่าใช้จ่ายในการจ่ายยา (ถุง/ฉลาก)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ต้นทุนวัสดุอุปกรณ์ในการจ่ายยา</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="supplies" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="bonus" class="input-label">
+                                    ค่าพัฒนาตนเอง/โบนัส
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าตอบแทนพิเศษหรือการพัฒนาทักษะพนักงาน</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="bonus" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="miscellaneous" class="input-label">
+                                    ค่าใช้จ่ายเบ็ดเตล็ด
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าใช้จ่ายอื่นๆ ที่ไม่เข้าหมวดอื่น</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="miscellaneous" class="input-field" min="0">
+                            </div>
+                        </div>
+                        <!-- Column 3 -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-slate-700">ค่าใช้จ่ายรายปี (Annual Expenses)</h4>
+                            <div class="input-group">
+                                <label for="annualLicense" class="input-label">
+                                    ใบอนุญาต (ยา, วัตถุออกฤทธิ์)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าต่ออายุใบอนุญาตยาและวัตถุออกฤทธิ์ต่อปี</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="annualLicense" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="annualTax" class="input-label">
+                                    ภาษี (ป้าย, โรงเรือน)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ภาษีป้ายและภาษีโรงเรือนต่อปี</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="annualTax" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="annualAudit" class="input-label">
+                                    ค่าตรวจสอบบัญชี
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าจ้างผู้สอบบัญชีรับอนุญาตต่อปี</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="annualAudit" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="gppFee" class="input-label">
+                                    ค่าตรวจ GPP (จ่ายทุก 2 ปี)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ค่าใช้จ่ายในการรับรอง GPP (Good Pharmacy Practice)</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="gppFee" class="input-field" min="0">
+                            </div>
+                        </div>
+                        <!-- Column 4 -->
+                        <div>
+                            <h4 class="font-semibold mb-2 text-slate-700">การลงทุนและต้นทุนตัดจำหน่าย</h4>
+                            <div class="input-group">
+                                <label for="systemDevCost" class="input-label">
+                                    ต้นทุนพัฒนาระบบ/บริการ
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">ต้นทุนการพัฒนาระบบซอฟต์แวร์หรือบริการใหม่</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="systemDevCost" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="amortizationYears" class="input-label">
+                                    ระยะเวลาตัดจำหน่าย (ปี)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">จำนวนปีที่ใช้ในการตัดจำหน่ายค่าใช้จ่าย</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="amortizationYears" class="input-field" min="1" max="10">
+                            </div>
+                            <div class="input-group">
+                                <label for="initialInventory" class="input-label">
+                                    ต้นทุนสินค้าคงคลังเริ่มต้น (บาท)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">มูลค่าสินค้าคงคลังในช่วงเริ่มต้นธุรกิจ</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="initialInventory" class="input-field" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="inventoryTurnover" class="input-label">
+                                    อัตราการหมุนเวียนสินค้า (ครั้ง/ปี)
+                                    <span class="tooltip">?
+                                        <span class="tooltiptext">จำนวนครั้งที่สินค้าคงคลังขายหมดและเติมใหม่ต่อปี</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="inventoryTurnover" class="input-field" min="0.1" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Main Error Message Container -->
+            <div id="main-error-container" class="hidden">
+                 <p class="font-bold mb-2">ข้อมูลไม่ถูกต้อง</p>
+                 <ul id="main-error-list" class="list-disc list-inside"></ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 mb-8 flex flex-wrap gap-4 justify-center">
+                <button id="calculateBtn" class="btn btn-primary text-lg">คำนวณและวิเคราะห์ผล</button>
+                <button id="exportBtn" class="btn btn-secondary text-lg" disabled>ส่งออกข้อมูล (PDF)</button>
+            </div>
+        </div>
+
+        <!-- Results Tab -->
+        <div id="results-tab" class="tab">
+            <div id="results" class="section-container">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">ผลการวิเคราะห์</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="result-card">
+                        <h3 class="result-title">งบกำไรขาดทุน (ประมาณการรายเดือน)</h3>
+                        <div class="result-item">
+                            <span class="result-label">ยอดขาย</span>
+                            <span class="result-value" id="result-monthly-sales">0.00 ฿</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ต้นทุนสินค้า</span>
+                            <span class="result-value" id="result-cogs">0.00 ฿</span>
+                        </div>
+                        <div class="result-item font-bold text-lg">
+                            <span class="result-label">กำไรขั้นต้น</span>
+                            <span class="result-value" id="result-gross-profit">0.00 ฿</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ค่าใช้จ่ายรวม</span>
+                            <span class="result-value" id="result-total-expenses">0.00 ฿</span>
+                        </div>
+                        <div class="result-item text-xl font-bold mt-4">
+                            <span class="result-label">กำไร (ขาดทุน) สุทธิ</span>
+                            <span class="result-value" id="result-net-profit" style="color: #1e293b;">0.00 ฿</span>
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">การวิเคราะห์ภาพรวมธุรกิจ</h3>
+                        <div class="metric-card mb-3">
+                            <div class="result-item">
+                                <span class="result-label">ยอดขาย ณ จุดคุ้มทุน</span>
+                                <span class="result-value" id="result-break-even">0.00 ฿</span>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ค่าใช้จ่ายเฉลี่ยต่อลูกค้า 1 คน</span>
+                            <span class="result-value" id="result-cost-per-customer">0.00 ฿</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">อัตรากำไรสุทธิ</span>
+                            <span class="result-value" id="result-net-margin">0.00 %</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">อัตราผลตอบแทนการลงทุน (ROI)</span>
+                            <span class="result-value" id="result-roi">0.00 %</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">เงินทุนหมุนเวียน</span>
+                            <span class="result-value" id="result-working-capital">0.00 ฿</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="mt-8">
+                    <h3 class="font-bold text-xl text-center mb-6">แสดงผลกราฟ</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="chart-container">
+                            <canvas id="profitChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="expensesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis-tab" class="tab">
+            <div class="section-container">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">การวิเคราะห์เชิงลึก</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="result-card">
+                        <h3 class="result-title">การวิเคราะห์ต้นทุน</h3>
+                        <div id="cost-analysis-content">
+                            <!-- Content will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3 class="result-title">การวิเคราะห์กำไร</h3>
+                        <div id="profit-analysis-content">
+                            <!-- Content will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 result-card">
+                    <h3 class="result-title">คำแนะนำและกลยุทธ์</h3>
+                    <div id="recommendations-content">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infographic Section -->
+        <div id="infographic" class="mt-12 section-container">
+            <h2 class="section-title text-center">สรุปสมมติฐานและแนวทางการคำนวณ (V3.1 Model)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Gross Profit -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-blue-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">กำไรขั้นต้น</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>ยอดขาย - ต้นทุนสินค้า</code></p>
+                    <p class="text-xs text-gray-500 mt-2">สะท้อนความสามารถในการทำกำไรจากการขายสินค้าโดยตรง</p>
+                </div>
+
+                <!-- Card 2: Net Profit -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-green-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">กำไรสุทธิ</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>กำไรขั้นต้น - ค่าใช้จ่ายรวม</code></p>
+                    <p class="text-xs text-gray-500 mt-2">ตัวชี้วัดสุดท้ายที่บอกถึงผลประกอบการที่แท้จริงของร้าน</p>
+                </div>
+
+                <!-- Card 3: Break-Even Point -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-yellow-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">จุดคุ้มทุน</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>ค่าใช้จ่ายคงที่ / อัตรากำไรส่วนเกิน</code></p>
+                    <p class="text-xs text-gray-500 mt-2">ยอดขายขั้นต่ำที่ร้านต้องทำให้ได้เพื่อไม่ให้ขาดทุน (Contribution Margin Ratio)</p>
+                </div>
+
+                 <!-- Card 4: Total Expenses -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-purple-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 0v6m0-6L5 19"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">โครงสร้างค่าใช้จ่าย</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>คชจ.คงที่ + คชจ.ผันแปร</code></p>
+                    <p class="text-xs text-gray-500 mt-2">ประกอบด้วยค่าใช้จ่ายบุคลากร, ดำเนินงาน, และค่าใช้จ่ายผันแปรอื่นๆ</p>
+                </div>
+
+                <!-- Card 5: Depreciation & Amortization -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-indigo-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">ค่าเสื่อม & ตัดจำหน่าย</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>มูลค่าสินทรัพย์ / (ระยะเวลาปี x 12)</code></p>
+                    <p class="text-xs text-gray-500 mt-2">การทยอยรับรู้ต้นทุนของสินทรัพย์ (อาคาร, อุปกรณ์, ระบบ) เป็นค่าใช้จ่ายรายเดือน</p>
+                </div>
+
+                <!-- Card 6: Cost per Patient -->
+                <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-8 h-8 text-pink-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <h4 class="text-lg font-semibold text-gray-700">ต้นทุนต่อลูกค้า</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm"><code>ค่าใช้จ่ายรวม / จำนวนลูกค้าทั้งหมด</code></p>
+                    <p class="text-xs text-gray-500 mt-2">ใช้วัดประสิทธิภาพการดำเนินงานและความสามารถในการบริหารต้นทุน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center py-6 text-gray-600 text-sm">
+            <p>ออกแบบโดย เภสัชกรวิรุณ เวชศิริ</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Store data for different pharmacy sizes
+        const pharmacyData = {
+            small: {
+                salesPerPatient: 200, patientsPerDay: 50, openingHours: 11.3, workingDays: 30,
+                pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
+                propertyType: 'rent', rent: 16638, buildingValue: 0, buildingDepreciationYears: 20,
+                equipmentCost: 323437, equipmentDepreciationYears: 5,
+                cogsRatio: 70, licenseFee: 10000, welfare: 1725, utilities: 3000,
+                supplies: 1500, bonus: 8625, miscellaneous: 1500,
+                annualLicense: 4000, annualTax: 2000, annualAudit: 10000, gppFee: 3000,
+                systemDevCost: 150000, amortizationYears: 3,
+                insurance: 12000, initialInventory: 300000, inventoryTurnover: 6
+            },
+            medium: {
+                salesPerPatient: 200, patientsPerDay: 100, openingHours: 12, workingDays: 30,
+                pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 2, assistantSalary: 15000,
+                propertyType: 'rent', rent: 27730, buildingValue: 5000000, buildingDepreciationYears: 20,
+                equipmentCost: 539061, equipmentDepreciationYears: 5,
+                cogsRatio: 70, licenseFee: 10000, welfare: 2175, utilities: 6000,
+                supplies: 3000, bonus: 10875, miscellaneous: 3000,
+                annualLicense: 4000, annualTax: 2000, annualAudit: 10000, gppFee: 3000,
+                systemDevCost: 150000, amortizationYears: 3,
+                insurance: 20000, initialInventory: 600000, inventoryTurnover: 8
+            },
+            large: {
+                salesPerPatient: 200, patientsPerDay: 150, openingHours: 12, workingDays: 30,
+                pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
+                propertyType: 'own', rent: 0, buildingValue: 7000000, buildingDepreciationYears: 20,
+                equipmentCost: 862497, equipmentDepreciationYears: 5,
+                cogsRatio: 70, licenseFee: 10000, welfare: 1725, utilities: 9000,
+                supplies: 4500, bonus: 8625, miscellaneous: 4500,
+                annualLicense: 4000, annualTax: 2000, annualAudit: 10000, gppFee: 3000,
+                systemDevCost: 150000, amortizationYears: 3,
+                insurance: 30000, initialInventory: 900000, inventoryTurnover: 10
+            }
+        };
+
+        // All input IDs
+        const allInputIds = [
+            'salesPerPatient', 'patientsPerDay', 'openingHours', 'workingDays', 'monthlySales',
+            'pharmacistFTE', 'pharmacistSalary', 'assistantFTE', 'assistantSalary', 'totalOT',
+            'propertyType', 'rent', 'buildingValue', 'buildingDepreciationYears',
+            'equipmentCost', 'equipmentDepreciationYears',
+            'cogsRatio', 'licenseFee', 'welfare', 'utilities',
+            'supplies', 'bonus', 'miscellaneous',
+            'annualLicense', 'annualTax', 'annualAudit', 'gppFee',
+            'systemDevCost', 'amortizationYears', 'insurance', 'initialInventory', 'inventoryTurnover'
+        ];
+
+        // Get all input elements
+        const inputs = {};
+        allInputIds.forEach(id => {
+            if (document.getElementById(id)) {
+                inputs[id] = document.getElementById(id);
+            }
+        });
+
+        const mainErrorContainer = document.getElementById('main-error-container');
+        const mainErrorList = document.getElementById('main-error-list');
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                
+                const tabId = button.getAttribute('data-tab');
+                const targetTab = document.getElementById(tabId + '-tab');
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    button.classList.add('active');
+                }
+            });
+        });
+
+        // Populate form based on selected size
+        function populateForm(size) {
+            clearValidationErrors(); // Clear errors when switching presets
+            if (size === 'custom') {
+                setActiveButton(size);
+                return;
+            }
+            
+            const data = pharmacyData[size];
+            if (!data) return;
+
+            Object.keys(data).forEach(key => {
+                if (inputs[key]) {
+                    inputs[key].value = data[key];
+                }
+            });
+            
+            togglePropertyFields();
+            updateCalculatedFields();
+            setActiveButton(size);
+        }
+
+        // Function to set the active state on size buttons
+        function setActiveButton(activeSize) {
+            document.querySelectorAll('#store-size-selector button').forEach(button => {
+                const is_active = button.dataset.size === activeSize;
+                button.classList.toggle('btn-active', is_active);
+                button.classList.toggle('btn-secondary', !is_active);
+            });
+        }
+        
+        // Toggle property fields based on selection
+        function togglePropertyFields() {
+            const type = inputs.propertyType ? inputs.propertyType.value : 'rent';
+            const rentGroup = document.getElementById('rent-group');
+            const ownGroup = document.getElementById('own-group');
+            
+            if (rentGroup && ownGroup) {
+                rentGroup.classList.toggle('hidden', type === 'own');
+                ownGroup.classList.toggle('hidden', type === 'rent');
+            }
+        }
+        
+        // Validation function
+        function validateInputs() {
+            let errors = [];
+            clearValidationErrors();
+
+            const requiredFields = {
+                'salesPerPatient': 'ยอดขายเฉลี่ยต่อคน',
+                'patientsPerDay': 'จำนวนลูกค้าเฉลี่ยต่อวัน',
+                'openingHours': 'จำนวนชั่วโมงให้บริการ',
+                'workingDays': 'จำนวนวันเปิดทำการ',
+                'cogsRatio': 'อัตราส่วนต้นทุนสินค้า'
+            };
+
+            Object.entries(requiredFields).forEach(([fieldId, fieldName]) => {
+                const inputElement = inputs[fieldId];
+                if (inputElement) {
+                    const value = parseFloat(inputElement.value);
+                    if (isNaN(value) || value <= 0) {
+                        errors.push(`${fieldName}ต้องเป็นตัวเลขที่มากกว่า 0`);
+                        const errorElement = document.getElementById(`${fieldId}-error`);
+                        if (errorElement) errorElement.textContent = 'กรุณากรอกข้อมูลให้ถูกต้อง';
+                        inputElement.classList.add('invalid');
+                    }
+                }
+            });
+            
+            return errors;
+        }
+
+        function clearValidationErrors() {
+             if (mainErrorContainer) mainErrorContainer.classList.add('hidden');
+             if (mainErrorList) mainErrorList.innerHTML = '';
+             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+             allInputIds.forEach(id => {
+                 if(inputs[id]) inputs[id].classList.remove('invalid');
+             });
+        }
+        
+        // Update calculated fields in real-time
+        function updateCalculatedFields() {
+            const salesPerPatient = parseFloat(inputs.salesPerPatient ? inputs.salesPerPatient.value : 0) || 0;
+            const patientsPerDay = parseFloat(inputs.patientsPerDay ? inputs.patientsPerDay.value : 0) || 0;
+            const workingDays = parseFloat(inputs.workingDays ? inputs.workingDays.value : 0) || 0;
+            const monthlySales = salesPerPatient * patientsPerDay * workingDays;
+            if (inputs.monthlySales) {
+                inputs.monthlySales.value = monthlySales.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            const openingHours = parseFloat(inputs.openingHours ? inputs.openingHours.value : 0) || 0;
+            const pharmacistFTE = parseFloat(inputs.pharmacistFTE ? inputs.pharmacistFTE.value : 0) || 0;
+            const assistantFTE = parseFloat(inputs.assistantFTE ? inputs.assistantFTE.value : 0) || 0;
+            
+            // Calculate overtime hours. The assumption is that salary is based on a standard 22-day work month (176 hours).
+            // Any hours required beyond this standard are considered overtime.
+            const requiredHours = openingHours * workingDays;
+            const standardHours = (pharmacistFTE + assistantFTE) * 8 * 22; 
+            const otHours = Math.max(0, requiredHours - standardHours);
+            
+            const pharmacistHourlyRate = (parseFloat(inputs.pharmacistSalary ? inputs.pharmacistSalary.value : 0) || 0) / 176; // 8*22
+            const assistantHourlyRate = (parseFloat(inputs.assistantSalary ? inputs.assistantSalary.value : 0) || 0) / 176;
+
+            const totalStaffFTE = pharmacistFTE + assistantFTE;
+            const totalPharmacistOT = totalStaffFTE > 0 ? otHours * (pharmacistFTE / totalStaffFTE) * pharmacistHourlyRate * 1.5 : 0;
+            const totalAssistantOT = totalStaffFTE > 0 ? otHours * (assistantFTE / totalStaffFTE) * assistantHourlyRate * 1.5 : 0;
+            
+            const totalOT = totalPharmacistOT + totalAssistantOT;
+            if (inputs.totalOT) {
+                inputs.totalOT.value = totalOT.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        }
+
+        // Main calculation function
+        function calculateAndDisplay() {
+            const errors = validateInputs();
+            if (errors.length > 0) {
+                if (mainErrorContainer) mainErrorContainer.classList.remove('hidden');
+                errors.forEach(err => {
+                    const li = document.createElement('li');
+                    li.textContent = err;
+                    if (mainErrorList) mainErrorList.appendChild(li);
+                });
+                const exportBtn = document.getElementById('exportBtn');
+                if (exportBtn) exportBtn.disabled = true;
+                return;
+            }
+            
+            const vals = {};
+            allInputIds.forEach(id => {
+                const element = inputs[id];
+                if(element){
+                    if (element.tagName === 'SELECT') {
+                        vals[id] = element.value;
+                    } else {
+                        vals[id] = parseFloat(element.value.replace(/,/g, '')) || 0;
+                    }
+                }
+            });
+
+            // Recalculate derived values to ensure they are current
+            vals.monthlySales = vals.salesPerPatient * vals.patientsPerDay * vals.workingDays;
+            const requiredHours = vals.openingHours * vals.workingDays;
+            const standardHours = (vals.pharmacistFTE + vals.assistantFTE) * 8 * 22;
+            const otHours = Math.max(0, requiredHours - standardHours);
+            const pharmacistHourlyRate = vals.pharmacistSalary > 0 ? vals.pharmacistSalary / 176 : 0;
+            const assistantHourlyRate = vals.assistantSalary > 0 ? vals.assistantSalary / 176 : 0;
+            const totalStaffFTE = vals.pharmacistFTE + vals.assistantFTE;
+            const totalPharmacistOT = totalStaffFTE > 0 ? otHours * (vals.pharmacistFTE / totalStaffFTE) * pharmacistHourlyRate * 1.5 : 0;
+            const totalAssistantOT = totalStaffFTE > 0 ? otHours * (vals.assistantFTE / totalStaffFTE) * assistantHourlyRate * 1.5 : 0;
+            vals.totalOT = totalPharmacistOT + totalAssistantOT;
+
+            // 1. Costs
+            const cogs = vals.monthlySales * (vals.cogsRatio / 100);
+            
+            // 2. Expenses
+            const personnelCost = (vals.pharmacistFTE * vals.pharmacistSalary) + 
+                                  (vals.assistantFTE * vals.assistantSalary) + 
+                                  vals.licenseFee + 
+                                  vals.welfare + 
+                                  vals.totalOT;
+            
+            let propertyCost = 0;
+            if (vals.propertyType === 'rent') {
+                propertyCost = vals.rent;
+            } else if (vals.buildingValue > 0 && vals.buildingDepreciationYears > 0) {
+                propertyCost = (vals.buildingValue / (vals.buildingDepreciationYears * 12));
+            }
+
+            const equipmentDepreciation = vals.equipmentDepreciationYears > 0 ? (vals.equipmentCost / (vals.equipmentDepreciationYears * 12)) : 0;
+            const amortizationCost = vals.amortizationYears > 0 ? (vals.systemDevCost / (vals.amortizationYears * 12)) : 0;
+            const annualCostsMonthly = (vals.annualLicense + vals.annualTax + vals.annualAudit) / 12 + (vals.gppFee / 24);
+            const insuranceMonthly = vals.insurance / 12;
+            
+            const fixedExpenses = personnelCost + propertyCost + equipmentDepreciation + 
+                                  amortizationCost + annualCostsMonthly + vals.utilities + insuranceMonthly;
+            const variableExpenses = vals.supplies + vals.bonus + vals.miscellaneous;
+            const totalExpenses = fixedExpenses + variableExpenses;
+
+            // 3. Profit
+            const grossProfit = vals.monthlySales - cogs;
+            const netProfit = grossProfit - totalExpenses;
+
+            // 4. Additional metrics
+            const contributionMarginRatio = vals.monthlySales > 0 ? (grossProfit / vals.monthlySales) : 0;
+            const breakEvenSales = contributionMarginRatio > 0 ? fixedExpenses / contributionMarginRatio : Infinity;
+            const netProfitMargin = vals.monthlySales > 0 ? (netProfit / vals.monthlySales) * 100 : 0;
+            const totalPatients = vals.patientsPerDay * vals.workingDays;
+            const costPerPatient = totalPatients > 0 ? totalExpenses / totalPatients : 0;
+            
+            const avgInventory = vals.initialInventory / 2;
+            const workingCapital = avgInventory;
+            
+            const initialInvestment = vals.buildingValue + vals.equipmentCost + vals.initialInventory + vals.systemDevCost;
+            const annualNetProfit = netProfit * 12;
+            const roi = initialInvestment > 0 ? (annualNetProfit / initialInvestment) * 100 : 0;
+
+            // Update results display
+            const resultMonthlySales = document.getElementById('result-monthly-sales');
+            if (resultMonthlySales) resultMonthlySales.textContent = toCurrency(vals.monthlySales);
+            
+            const resultCogs = document.getElementById('result-cogs');
+            if (resultCogs) resultCogs.textContent = toCurrency(cogs);
+            
+            const resultGrossProfit = document.getElementById('result-gross-profit');
+            if (resultGrossProfit) resultGrossProfit.textContent = toCurrency(grossProfit);
+            
+            const resultTotalExpenses = document.getElementById('result-total-expenses');
+            if (resultTotalExpenses) resultTotalExpenses.textContent = toCurrency(totalExpenses);
+            
+            const netProfitElement = document.getElementById('result-net-profit');
+            if (netProfitElement) {
+                netProfitElement.textContent = toCurrency(netProfit);
+                netProfitElement.className = netProfit >= 0 ? 'result-value profit' : 'result-value loss';
+            }
+            
+            const resultBreakEven = document.getElementById('result-break-even');
+            if (resultBreakEven) resultBreakEven.textContent = toCurrency(breakEvenSales);
+            
+            const resultCostPerCustomer = document.getElementById('result-cost-per-customer');
+            if (resultCostPerCustomer) resultCostPerCustomer.textContent = toCurrency(costPerPatient);
+            
+            const resultNetMargin = document.getElementById('result-net-margin');
+            if (resultNetMargin) resultNetMargin.textContent = toPercent(netProfitMargin);
+            
+            const resultRoi = document.getElementById('result-roi');
+            if (resultRoi) resultRoi.textContent = toPercent(roi);
+            
+            const resultWorkingCapital = document.getElementById('result-working-capital');
+            if (resultWorkingCapital) resultWorkingCapital.textContent = toCurrency(workingCapital);
+
+            // Update analysis sections
+            updateCostAnalysis(cogs, personnelCost, propertyCost, equipmentDepreciation, annualCostsMonthly, insuranceMonthly, fixedExpenses, variableExpenses);
+            updateProfitAnalysis(vals.monthlySales, grossProfit, netProfit, contributionMarginRatio, fixedExpenses, (cogs + variableExpenses));
+            updateRecommendations(netProfit, vals, contributionMarginRatio, breakEvenSales, totalExpenses);
+            
+            // Update charts
+            updateCharts(vals, fixedExpenses, variableExpenses, personnelCost, propertyCost, equipmentDepreciation, cogs);
+            
+            // Show tabs and switch to results
+            const tabNavigation = document.getElementById('tab-navigation');
+            if (tabNavigation) tabNavigation.classList.remove('hidden');
+            if (document.querySelector('.tab-button[data-tab="inputs"]')) {
+                document.querySelector('.tab-button[data-tab="inputs"]').click(); // Simulate click to reset tab state
+            }
+            if (document.querySelector('.tab-button[data-tab="results"]')) {
+                document.querySelector('.tab-button[data-tab="results"]').click(); // Then switch to results
+            }
+
+            // Enable export button
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) exportBtn.disabled = false;
+        }
+        
+        // Update analysis sections
+        function updateCostAnalysis(cogs, personnel, property, equipment, annual, insurance, fixed, variable) {
+            const costAnalysisContent = document.getElementById('cost-analysis-content');
+            if (costAnalysisContent) {
+                costAnalysisContent.innerHTML = `
+                    <div class="result-item"><span class="result-label">ต้นทุนสินค้า (COGS)</span><span class="result-value">${toCurrency(cogs)}</span></div>
+                    <div class="result-item"><span class="result-label">ค่าใช้จ่ายบุคลากร</span><span class="result-value">${toCurrency(personnel)}</span></div>
+                    <div class="result-item"><span class="result-label">ค่าใช้จ่ายสถานที่</span><span class="result-value">${toCurrency(property)}</span></div>
+                    <div class="result-item"><span class="result-label">ค่าเสื่อมราคาอุปกรณ์</span><span class="result-value">${toCurrency(equipment)}</span></div>
+                    <div class="result-item"><span class="result-label">ค่าใช้จ่ายประจำอื่นๆ</span><span class="result-value">${toCurrency(annual + insurance)}</span></div>
+                    <div class="result-item font-bold mt-2"><span class="result-label">รวมค่าใช้จ่ายคงที่</span><span class="result-value">${toCurrency(fixed)}</span></div>
+                    <div class="result-item"><span class="result-label">รวมค่าใช้จ่ายผันแปร</span><span class="result-value">${toCurrency(variable)}</span></div>`;
+            }
+        }
+
+        function updateProfitAnalysis(sales, gross, net, marginRatio, fixed, variable) {
+            const profitAnalysisContent = document.getElementById('profit-analysis-content');
+            if (profitAnalysisContent) {
+                profitAnalysisContent.innerHTML = `
+                    <div class="result-item"><span class="result-label">ยอดขาย</span><span class="result-value">${toCurrency(sales)}</span></div>
+                    <div class="result-item"><span class="result-label">กำไรขั้นต้น</span><span class="result-value">${toCurrency(gross)}</span></div>
+                    <div class="result-item"><span class="result-label">อัตรากำไรขั้นต้น (GM %)</span><span class="result-value">${toPercent(marginRatio * 100)}</span></div>
+                    <div class="result-item"><span class="result-label">ค่าใช้จ่ายคงที่</span><span class="result-value">${toCurrency(fixed)}</span></div>
+                    <div class="result-item"><span class="result-label">ต้นทุนผันแปรทั้งหมด</span><span class="result-value">${toCurrency(variable)}</span></div>
+                    <div class="result-item text-xl font-bold mt-2"><span class="result-label">กำไรสุทธิ</span><span class="result-value ${net >= 0 ? 'profit' : 'loss'}">${toCurrency(net)}</span></div>`;
+            }
+        }
+
+        function updateRecommendations(netProfit, vals, marginRatio, breakEvenSales, totalExpenses) {
+            let recommendations = [];
+            if (netProfit < 0) {
+                recommendations.push("<b>สถานะ:</b> ร้านยังขาดทุน ควรพิจารณาเพิ่มยอดขายหรือลดต้นทุน");
+            } else {
+                recommendations.push(`<b>สถานะ:</b> ร้านมีกำไร ${toCurrency(netProfit)}/เดือน ควรวางแผนต่อยอดการเติบโต`);
+            }
+            
+            if (vals.monthlySales < breakEvenSales) {
+                recommendations.push(`<b>จุดคุ้มทุน:</b> ยอดขายยังต่ำกว่าจุดคุ้มทุน ต้องเพิ่มยอดขายอีก <b>${toCurrency(breakEvenSales - vals.monthlySales)}</b> เพื่อให้เท่าทุน`);
+            } else {
+                recommendations.push(`<b>จุดคุ้มทุน:</b> ยอดขายปัจจุบันสูงกว่าจุดคุ้มทุนอยู่ <b>${toCurrency(vals.monthlySales - breakEvenSales)}</b>`);
+            }
+
+            if (marginRatio < 0.25) {
+                recommendations.push("<b>กำไรขั้นต้น:</b> อัตรากำไรขั้นต้นค่อนข้างต่ำ (<25%) ควรพิจารณาปรับกลยุทธ์ราคาสินค้าหรือเจรจาต่อรองกับผู้ขาย");
+            }
+             const personnelRatio = ((vals.pharmacistFTE * vals.pharmacistSalary + vals.assistantFTE * vals.assistantSalary) / totalExpenses) * 100;
+            if(personnelRatio > 50){
+                recommendations.push(`<b>บุคลากร:</b> ค่าใช้จ่ายบุคลากรคิดเป็น ${toPercent(personnelRatio)} ของค่าใช้จ่ายรวม ซึ่งค่อนข้างสูง อาจต้องพิจารณาประสิทธิภาพการทำงาน`);
+            }
+
+            const recommendationsContent = document.getElementById('recommendations-content');
+            if (recommendationsContent) {
+                recommendationsContent.innerHTML = recommendations.map(rec => `<div class="bg-blue-50 p-3 rounded-lg mb-2">${rec}</div>`).join('');
+            }
+        }
+        
+        // Update charts
+        let profitChartInstance = null;
+        let expensesChartInstance = null;
+
+        function updateCharts(inputs, fixedExpenses, variableExpenses, personnelCost, propertyCost, equipmentDepreciation, cogs) {
+            const netProfit = inputs.monthlySales - cogs - (fixedExpenses + variableExpenses);
+            const profitCtx = document.getElementById('profitChart');
+            if (profitCtx) {
+                const ctx = profitCtx.getContext('2d');
+                if (profitChartInstance) profitChartInstance.destroy();
+                profitChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['ยอดขาย', 'ต้นทุนสินค้า', 'กำไรขั้นต้น', 'ค่าใช้จ่าย', 'กำไรสุทธิ'],
+                        datasets: [{
+                            label: 'จำนวนเงิน (บาท)',
+                            data: [
+                                inputs.monthlySales, 
+                                -cogs, 
+                                inputs.monthlySales - cogs, 
+                                -(fixedExpenses + variableExpenses), 
+                                netProfit
+                            ],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)', 'rgba(239, 68, 68, 0.7)',
+                                'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)',
+                                netProfit >= 0 ? 'rgba(34, 197, 94, 0.8)' : 'rgba(239, 68, 68, 0.8)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        plugins: { 
+                            title: { 
+                                display: true, 
+                                text: 'โครงสร้างกำไร-ขาดทุน' 
+                            }
+                        }
+                    }
+                });
+            }
+            
+            const expensesCtx = document.getElementById('expensesChart');
+            if (expensesCtx) {
+                const ctx = expensesCtx.getContext('2d');
+                if (expensesChartInstance) expensesChartInstance.destroy();
+                expensesChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['ต้นทุนสินค้า', 'บุคลากร', 'สถานที่', 'อุปกรณ์/ตัดจำหน่าย', 'ค่าใช้จ่ายอื่นๆ'],
+                        datasets: [{
+                            data: [
+                                cogs, personnelCost, propertyCost,
+                                equipmentDepreciation + (inputs.amortizationYears > 0 ? (inputs.systemDevCost / (inputs.amortizationYears * 12)) : 0),
+                                (fixedExpenses - personnelCost - propertyCost - equipmentDepreciation) + variableExpenses
+                            ],
+                            backgroundColor: [
+                                'rgba(239, 68, 68, 0.7)', 'rgba(59, 130, 246, 0.7)',
+                                'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)',
+                                'rgba(139, 92, 246, 0.7)'
+                            ],
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        plugins: { 
+                            title: { 
+                                display: true, 
+                                text: 'สัดส่วนต้นทุนและค่าใช้จ่าย' 
+                            }, 
+                            legend: { 
+                                position: 'bottom' 
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Export functionality
+        function exportToPDF() {
+            const exportBtn = document.getElementById('exportBtn');
+            if(exportBtn && exportBtn.disabled) return;
+            const printWindow = window.open('', '_blank');
+            const recommendationsHTML = document.getElementById('recommendations-content').innerHTML
+                .replace(/class="bg-blue-50 p-3 rounded-lg mb-2"/g, 'style="padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; background-color: #f0f8ff;"');
+            
+            const content = `<html><head><title>ผลการวิเคราะห์ร้านยา</title><style>
+                body { font-family: Sarabun, Arial, sans-serif; }
+                .export-header { text-align: center; margin-bottom: 20px; }
+                .export-title { font-size: 1.5em; font-weight: bold; }
+                .export-date { font-size: 0.9em; color: #666; }
+                .export-section { margin-bottom: 20px; break-inside: avoid; }
+                .export-results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                .export-result-card { border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+                .export-result-title { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+                .export-result-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+                .export-result-label { color: #333; }
+                .export-result-value { font-weight: bold; text-align: right; }
+                </style></head><body>
+                <div class="export-header">
+                    <div class="export-title">ผลการวิเคราะห์ธุรกิจร้านยา</div>
+                    <div class="export-date">วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                </div>
+                <div class="export-section">
+                    <div class="export-results-grid">
+                        <div class="export-result-card">
+                            <div class="export-result-title">งบกำไรขาดทุน (รายเดือน)</div>
+                            ${document.querySelector('#results .result-card:nth-child(1)').innerHTML.replace(/result-/g, 'export-result-')}
+                        </div>
+                        <div class="export-result-card">
+                            <div class="export-result-title">การวิเคราะห์ภาพรวม</div>
+                            ${document.querySelector('#results .result-card:nth-child(2)').innerHTML.replace(/result-/g, 'export-result-').replace(/metric-card/g, '')}
+                        </div>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <div class="export-result-card">
+                        <div class="export-result-title">คำแนะนำและกลยุทธ์</div>
+                        ${recommendationsHTML}
+                    </div>
+                </div>
+                </body></html>`;
+
+            printWindow.document.write(content);
+            printWindow.document.close();
+            printWindow.onload = () => printWindow.print();
+        }
+        
+        // Helper functions
+        const toCurrency = (num) => isFinite(num) ? num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ฿' : 'N/A';
+        const toPercent = (num) => isFinite(num) ? num.toFixed(2) + ' %' : 'N/A';
+        
+        // Event Listeners
+        const storeSizeSelector = document.getElementById('store-size-selector');
+        if (storeSizeSelector) {
+            storeSizeSelector.addEventListener('click', e => { 
+                if (e.target.tagName === 'BUTTON') populateForm(e.target.dataset.size); 
+            });
+        }
+        
+        if (inputs.propertyType) {
+            inputs.propertyType.addEventListener('change', togglePropertyFields);
+        }
+        
+        const calculateBtn = document.getElementById('calculateBtn');
+        if (calculateBtn) {
+            calculateBtn.addEventListener('click', calculateAndDisplay);
+        }
+        
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportToPDF);
+        }
+
+        // Add listeners to auto-update calculated fields and switch to custom
+        allInputIds.forEach(id => {
+            const el = inputs[id];
+            if(el && el.id !== 'monthlySales' && el.id !== 'totalOT') {
+                el.addEventListener('input', () => {
+                    updateCalculatedFields();
+                    setActiveButton('custom');
+                });
+            }
+        });
+        
+        // Initial state
+        populateForm('small'); // Start with 'small' as default
+        updateCalculatedFields();
+    </script>
+</body>
+</html>
+
