@@ -203,12 +203,7 @@
             </div>
         </header>
 
-        <!-- Tab Navigation -->
-        <div class="mb-6 hidden" id="tab-navigation">
-            <button class="tab-button active" data-tab="inputs">ข้อมูลนำเข้า</button>
-            <button class="tab-button" data-tab="results">ผลลัพธ์</button>
-            <button class="tab-button" data-tab="analysis">การวิเคราะห์</button>
-        </div>
+        
 
         <!-- Input Tab -->
         <div id="inputs-tab" class="tab active">
@@ -579,6 +574,14 @@
                 <button id="calculateBtn" class="btn btn-primary text-lg">คำนวณและวิเคราะห์ผล</button>
                 <button id="exportBtn" class="btn btn-secondary text-lg" disabled>ส่งออกข้อมูล (PDF)</button>
             </div>
+            
+            <!-- Tab Navigation -->
+            <div class="mb-6 hidden" id="tab-navigation">
+                <button class="tab-button active" data-tab="inputs">ข้อมูลนำเข้า</button>
+                <button class="tab-button" data-tab="results">ผลลัพธ์</button>
+                <button class="tab-button" data-tab="analysis">การวิเคราะห์</button>
+            </div>
+
         </div>
 
         <!-- Results Tab -->
@@ -759,7 +762,7 @@
         // Store data for different pharmacy sizes
         const pharmacyData = {
             small: {
-                salesPerPatient: 200, patientsPerDay: 50, openingHours: 12, workingDays: 26,
+                salesPerPatient: 100, patientsPerDay: 50, openingHours: 12, workingDays: 26,
                 pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
                 propertyType: 'rent', rent: 10000, buildingValue: 0, buildingDepreciationYears: 20,
                 equipmentCost: 323437, equipmentDepreciationYears: 5,
@@ -781,7 +784,7 @@
                 insurance: 20000, initialInventory: 600000, inventoryTurnover: 8
             },
             large: {
-                salesPerPatient: 200, patientsPerDay: 150, openingHours: 12, workingDays: 26,
+                salesPerPatient: 300, patientsPerDay: 150, openingHours: 12, workingDays: 26,
                 pharmacistFTE: 1, pharmacistSalary: 42500, assistantFTE: 1, assistantSalary: 15000,
                 propertyType: 'own', rent: 0, buildingValue: 7000000, buildingDepreciationYears: 20,
                 equipmentCost: 862497, equipmentDepreciationYears: 5,
@@ -1084,6 +1087,16 @@
             // Enable export button
             const exportBtn = document.getElementById('exportBtn');
             if (exportBtn) exportBtn.disabled = false;
+            
+            // Show tabs and switch to results
+            const tabNavigation = document.getElementById('tab-navigation');
+            if (tabNavigation) tabNavigation.classList.remove('hidden');
+            if (document.querySelector('.tab-button[data-tab="inputs"]')) {
+                document.querySelector('.tab-button[data-tab="inputs"]').click(); // Simulate click to reset tab state
+            }
+            if (document.querySelector('.tab-button[data-tab="results"]')) {
+                document.querySelector('.tab-button[data-tab="results"]').click(); // Then switch to results
+            }
         }
         
         // Update analysis sections
