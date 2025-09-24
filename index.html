@@ -575,12 +575,7 @@
                 <button id="exportBtn" class="btn btn-secondary text-lg" disabled>ส่งออกข้อมูล (PDF)</button>
             </div>
             
-            <!-- Tab Navigation -->
-            <div class="mb-6 hidden" id="tab-navigation">
-                <button class="tab-button active" data-tab="inputs">ข้อมูลนำเข้า</button>
-                <button class="tab-button" data-tab="results">ผลลัพธ์</button>
-                <button class="tab-button" data-tab="analysis">การวิเคราะห์</button>
-            </div>
+            
         </div>
 
         <!-- Results Tab -->
@@ -1076,14 +1071,29 @@
             // Show tabs and switch to results
             const tabNavigation = document.getElementById('tab-navigation');
             if (tabNavigation) tabNavigation.classList.remove('hidden');
-            // Switch to results tab after calculation, but don't interfere with user's tab navigation
-            if (document.querySelector('.tab-button[data-tab="results"]')) {
-                document.querySelector('.tab-button[data-tab="results"]').click(); // Switch to results
-            }
-
+            
             // Enable export button
             const exportBtn = document.getElementById('exportBtn');
             if (exportBtn) exportBtn.disabled = false;
+            
+            // Switch to results tab after calculation
+            setTimeout(() => {
+                // Remove active class from all tabs and buttons
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                
+                // Activate results tab and its button
+                const resultsTab = document.getElementById('results-tab');
+                const resultsButton = document.querySelector('.tab-button[data-tab="results"]');
+                
+                if (resultsTab) resultsTab.classList.add('active');
+                if (resultsButton) {
+                    resultsButton.classList.add('active');
+                    // Also make sure inputs tab button gets proper class
+                    const inputsButton = document.querySelector('.tab-button[data-tab="inputs"]');
+                    if (inputsButton) inputsButton.classList.remove('active');
+                }
+            }, 100); // Small delay to ensure DOM is ready
         }
         
         // Update analysis sections
